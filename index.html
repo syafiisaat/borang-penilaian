@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borang Penilaian Akhir – PICGAS 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16241f;
+    --ink-soft:#4b5b54;
+    --paper:#eef1ea;
+    --card:#ffffff;
+    --line:#d7dbd2;
+    --line-strong:#b9c2ba;
+    --accent-deep:#1f4d43;
+    --accent-deep-dark:#153731;
+    --accent-tint:#eaf3ef;
+    --accent-gold:#b9852c;
+    --danger:#a23b3b;
+    --danger-bg:#fbeaea;
+    --font-serif:'Spectral', Georgia, 'Times New Roman', serif;
+    --font-sans:'IBM Plex Sans', 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-anchor:none;
+  }
+
+  .page{
+    max-width:720px;
+    margin:0 auto;
+    padding:36px 20px 100px;
+  }
+
+  .masthead{
+    position:relative;
+    padding:8px 0 28px;
+    border-bottom:3px solid var(--accent-deep);
+    margin-bottom:8px;
+  }
+  .masthead::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-6px;
+    height:6px;
+    background:repeating-linear-gradient(135deg, var(--accent-gold) 0 6px, transparent 6px 14px);
+    opacity:0.55;
+  }
+  .eyebrow{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin:0 0 8px;
+  }
+  .masthead h1{
+    font-family:var(--font-serif);
+    font-weight:600;
+    font-size:1.85rem;
+    line-height:1.25;
+    margin:0;
+    color:var(--ink);
+  }
+
+  .config-warning{
+    display:none;
+    background:#fff4d6;
+    border:1px solid var(--accent-gold);
+    color:#6b4f14;
+    padding:12px 16px;
+    border-radius:8px;
+    margin:24px 0;
+    font-size:0.87rem;
+  }
+  .config-warning code{
+    background:rgba(0,0,0,0.06);
+    padding:1px 5px;
+    border-radius:4px;
+  }
+
+  .error-banner{
+    display:none;
+    background:var(--danger-bg);
+    border:1px solid var(--danger);
+    color:var(--danger);
+    padding:12px 16px;
+    border-radius:8px;
+    margin:20px 0;
+    font-size:0.9rem;
+  }
+  .error-banner.show{ display:block; }
+
+  .field{ margin:26px 0; }
+  .field-label{
+    display:flex;
+    gap:4px;
+    align-items:baseline;
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .req{ color:var(--danger); font-weight:700; }
+
+  select, textarea, input[type="text"]{
+    width:100%;
+    font-family:var(--font-sans);
+    font-size:1rem;
+    color:var(--ink);
+    background:var(--card);
+    border:1.5px solid var(--line-strong);
+    border-radius:8px;
+    padding:11px 12px;
+  }
+  select:focus, textarea:focus, input[type="text"]:focus{
+    outline:3px solid var(--accent-gold);
+    outline-offset:1px;
+    border-color:var(--accent-deep);
+  }
+  textarea{ resize:vertical; min-height:90px; }
+
+  .total-box{
+    position:sticky;
+    top:12px;
+    z-index:5;
+    background:var(--card);
+    border:1.5px solid var(--accent-deep);
+    border-radius:10px;
+    padding:12px 18px;
+    margin:24px 0 8px;
+    box-shadow:0 3px 10px rgba(21,55,49,0.12);
+    font-family:var(--font-sans);
+  }
+  .total-main{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .total-box .total-label{ font-weight:600; color:var(--ink); font-size:0.92rem; }
+  .total-box .total-score{ font-family:var(--font-serif); font-weight:700; font-size:1.3rem; color:var(--accent-deep); }
+  .total-box .total-score span.max{ font-size:0.95rem; color:var(--ink-soft); font-weight:500; }
+  .total-breakdown{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px 18px;
+    margin-top:9px;
+    padding-top:9px;
+    border-top:1px solid var(--line);
+    font-size:0.78rem;
+    color:var(--ink-soft);
+  }
+  .total-breakdown .breakdown-item strong{ color:var(--ink); font-weight:600; }
+
+  .result-section{ margin:38px 0 26px; }
+  .result-heading{
+    font-family:var(--font-serif);
+    font-weight:600;
+    font-size:1.1rem;
+    color:var(--ink);
+    margin:0 0 8px;
+  }
+  .pass-criteria{
+    margin:0 0 16px;
+    padding-left:20px;
+    font-size:0.88rem;
+    color:var(--ink-soft);
+  }
+  .pass-criteria li{ margin-bottom:3px; }
+  .result-box{
+    border:1.5px solid var(--line-strong);
+    border-radius:10px;
+    padding:16px 18px;
+    background:var(--card);
+  }
+  .result-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.9rem;
+    margin-bottom:8px;
+  }
+  .result-row span:first-child{ color:var(--ink-soft); }
+  .result-row span:last-child{ font-weight:600; color:var(--ink); }
+  .result-verdict{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  .result-verdict.pending{
+    color:var(--ink-soft);
+    font-family:var(--font-sans);
+    font-weight:600;
+    font-size:0.85rem;
+  }
+  .result-verdict.pass{
+    color:var(--accent-deep);
+    font-family:var(--font-serif);
+    font-weight:700;
+    font-size:1.35rem;
+    letter-spacing:0.02em;
+  }
+  .result-verdict.fail{
+    color:var(--danger);
+    font-family:var(--font-serif);
+    font-weight:700;
+    font-size:1.35rem;
+    letter-spacing:0.02em;
+  }
+
+  .part{ margin-top:44px; }
+  .part-header{
+    border-bottom:2px solid var(--accent-deep);
+    padding-bottom:10px;
+    margin-bottom:22px;
+  }
+  .part-header h2{
+    font-family:var(--font-serif);
+    font-weight:600;
+    font-size:1.3rem;
+    color:var(--accent-deep);
+    margin:0;
+  }
+
+  .group{
+    margin-bottom:34px;
+    padding-bottom:30px;
+    border-bottom:1px solid var(--line);
+  }
+  .group:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .group-title{
+    font-family:var(--font-serif);
+    font-weight:600;
+    font-size:1.05rem;
+    color:var(--ink);
+    margin:0 0 16px;
+  }
+
+  .group-extra-field{ margin:0 0 22px; }
+  .group-extra-field input[type="text"]{ max-width:420px; }
+
+  .item{ margin-bottom:30px; }
+  .item:last-child{ margin-bottom:0; }
+  .item-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .item-label{
+    display:flex;
+    gap:4px;
+    align-items:baseline;
+    font-weight:600;
+    font-size:0.98rem;
+  }
+  .max-badge{
+    font-size:0.76rem;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    border:1px solid var(--line-strong);
+    border-radius:20px;
+    padding:2px 9px;
+  }
+  .item-note{
+    margin:8px 0 0;
+    padding-left:20px;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+  }
+  .item-note li{ margin-bottom:2px; }
+
+  .band-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin:14px 0 4px;
+  }
+  .band-list input[type="radio"]{
+    position:absolute;
+    opacity:0;
+    width:1px;
+    height:1px;
+  }
+  .band-card{
+    display:block;
+    border:1.5px solid var(--line-strong);
+    border-radius:10px;
+    padding:12px 14px;
+    cursor:pointer;
+    background:var(--card);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .band-card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .band-tier{ font-weight:600; font-size:0.8rem; color:var(--ink-soft); }
+  .band-range{ font-family:var(--font-serif); font-weight:600; color:var(--accent-deep); font-size:0.95rem; white-space:nowrap; }
+  .band-desc{ font-size:0.89rem; color:var(--ink); line-height:1.45; }
+  .band-list input[type="radio"]:checked + label.band-card{
+    border-color:var(--accent-deep);
+    background:var(--accent-tint);
+  }
+  .band-list input[type="radio"]:checked + label.band-card .band-tier{ color:var(--accent-deep); }
+  .band-list input[type="radio"]:focus-visible + label.band-card{
+    outline:3px solid var(--accent-gold);
+    outline-offset:2px;
+  }
+
+  .score-picker{ margin-top:10px; }
+  .score-picker-label{ font-size:0.82rem; color:var(--ink-soft); margin-bottom:6px; }
+  .scale-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .scale-row input[type="radio"]{
+    position:absolute;
+    opacity:0;
+    width:1px;
+    height:1px;
+  }
+  .scale-row label.pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:42px;
+    height:42px;
+    padding:0 10px;
+    border:1.5px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--ink-soft);
+    font-size:0.95rem;
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .scale-row input[type="radio"]:checked + label.pill{
+    background:var(--accent-deep);
+    border-color:var(--accent-deep);
+    color:#fff;
+  }
+  .scale-row input[type="radio"]:focus-visible + label.pill{
+    outline:3px solid var(--accent-gold);
+    outline-offset:2px;
+  }
+
+  .score-summary{
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    margin-top:8px;
+    font-style:italic;
+  }
+  .score-summary.chosen{ color:var(--accent-deep); font-style:normal; font-weight:600; }
+
+  .choice-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:6px;
+  }
+  .choice-row input[type="radio"]{
+    position:absolute;
+    opacity:0;
+    width:1px;
+    height:1px;
+  }
+  .choice-row label.choice-pill{
+    padding:11px 20px;
+    border:1.5px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--card);
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .choice-row input[type="radio"]:checked + label.choice-pill{
+    background:var(--accent-deep);
+    border-color:var(--accent-deep);
+    color:#fff;
+  }
+  .choice-row input[type="radio"]:focus-visible + label.choice-pill{
+    outline:3px solid var(--accent-gold);
+    outline-offset:2px;
+  }
+
+  .actions{
+    margin-top:44px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+  button[type="submit"]{
+    background:var(--accent-deep);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:14px 30px;
+    font-family:var(--font-sans);
+    font-weight:600;
+    font-size:1rem;
+    cursor:pointer;
+  }
+  button[type="submit"]:hover{ background:var(--accent-deep-dark); }
+  button[type="submit"]:disabled{ opacity:0.6; cursor:not-allowed; }
+
+  .clear-link{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font-family:var(--font-sans);
+    font-size:0.9rem;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+
+  .success-panel{
+    display:none;
+    text-align:center;
+    padding:70px 16px;
+  }
+  .success-panel.show{ display:block; }
+  .success-panel h2{
+    font-family:var(--font-serif);
+    color:var(--accent-deep);
+    font-size:1.6rem;
+    margin-bottom:10px;
+  }
+  .success-panel p{ color:var(--ink-soft); margin-bottom:26px; }
+  .success-panel button{
+    background:var(--accent-deep);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:12px 26px;
+    font-family:var(--font-sans);
+    font-weight:600;
+    font-size:0.95rem;
+    cursor:pointer;
+  }
+
+  footer.note{
+    margin-top:60px;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  @media (max-width:480px){
+    .masthead h1{ font-size:1.5rem; }
+    .scale-row label.pill{ min-width:38px; height:38px; font-size:0.88rem; }
+    .total-box{ flex-direction:column; gap:4px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="eyebrow">Anjuran AtTartil Quranic Institute</p>
+    <h1>Borang Penilaian Akhir — PICGAS 4</h1>
+  </header>
+
+  <div id="configWarning" class="config-warning">
+    ⚠ Borang ini belum disambungkan ke Google Sheet. Buka fail HTML ini dalam editor teks, cari pemboleh ubah <code>SCRIPT_URL</code> berhampiran penghujung skrip, dan gantikan dengan pautan Web App Apps Script anda.
+  </div>
+
+  <p style="color:var(--ink-soft); font-size:0.85rem; margin-top:20px;">* menandakan soalan wajib. Pilih penerangan Jalur yang paling sesuai bagi setiap komponen — markah tepat akan dicadangkan secara automatik, dan anda boleh laraskan jika perlu.</p>
+
+  <div id="errorBanner" class="error-banner"></div>
+
+  <form id="evalForm" novalidate>
+
+    <div class="field">
+      <label class="field-label" for="tarikhPenilaian">Tarikh Penilaian <span class="req">*</span></label>
+      <select id="tarikhPenilaian" name="tarikhPenilaian" required></select>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="namaPeserta">Nama Peserta <span class="req">*</span></label>
+      <select id="namaPeserta" name="namaPeserta" required></select>
+    </div>
+
+    <div class="total-box" id="totalBox">
+      <div class="total-main">
+        <span class="total-label">Jumlah markah setakat ini</span>
+        <span class="total-score"><span id="totalScore">0</span> <span class="max">/ <span id="totalMax">100</span></span></span>
+      </div>
+      <div class="total-breakdown" id="totalBreakdown"></div>
+    </div>
+
+    <div id="rubricRoot"></div>
+
+    <div class="field">
+      <div class="field-label">Tahap kesediaan pelajar untuk daftar Temuduga ARB <span class="req">*</span></div>
+      <div class="choice-row" id="kesediaanArbRow">
+        <input type="radio" name="kesediaanArb" id="arb_bersedia" value="Bersedia" required>
+        <label class="choice-pill" for="arb_bersedia">Bersedia</label>
+        <input type="radio" name="kesediaanArb" id="arb_belum" value="Belum Bersedia">
+        <label class="choice-pill" for="arb_belum">Belum Bersedia</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="ulasanPenilai">Ulasan ringkas penilai</label>
+      <textarea id="ulasanPenilai" name="ulasanPenilai" rows="4"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="namaPenilai">Nama Penilai <span class="req">*</span></label>
+      <select id="namaPenilai" name="namaPenilai" required></select>
+    </div>
+
+    <div class="field" id="namaPenilaiOtherField" style="display:none;">
+      <label class="field-label" for="namaPenilaiOther">Sila nyatakan nama penilai <span class="req">*</span></label>
+      <input type="text" id="namaPenilaiOther" name="namaPenilaiOther">
+    </div>
+
+    <div class="result-section">
+      <h3 class="result-heading">Syarat Kelulusan</h3>
+      <ul class="pass-criteria">
+        <li>40% ke atas bagi Komponen A (Bacaan)</li>
+        <li>60% Jumlah Keseluruhan (Komponen A+B+C)</li>
+      </ul>
+      <div class="result-box" id="resultBox">
+        <div class="result-row">
+          <span>Komponen A (Bacaan)</span>
+          <span id="resultA">0 / 70 (0%)</span>
+        </div>
+        <div class="result-row">
+          <span>Jumlah Keseluruhan</span>
+          <span id="resultTotal">0 / 100 (0%)</span>
+        </div>
+        <div class="result-verdict pending" id="resultVerdict">Keputusan belum lengkap</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" id="submitBtn">Hantar Penilaian</button>
+      <button type="button" class="clear-link" id="clearBtn">Kosongkan borang</button>
+    </div>
+  </form>
+
+  <div class="success-panel" id="successPanel">
+    <h2>Penilaian telah dihantar</h2>
+    <p>Terima kasih. Rekod telah disimpan ke dalam Google Sheet.</p>
+    <button type="button" id="submitAnother">Hantar penilaian lain</button>
+  </div>
+
+  <footer class="note">Borang ini disediakan untuk kegunaan dalaman AtTartil Quranic Institute.</footer>
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // 1. Paste your Google Apps Script Web App URL below (ends in /exec)
+  // ---------------------------------------------------------------
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz15gLVkrqFQtWQLdL5BnCS9H5dihVJwGAlX1uyAICDm4nD1CtrkUOUk5CGcd4EfTzH/exec";
+
+  const dates = ["3 Oct", "10 Oct", "17 Oct", "24 Oct"];
+
+  const participants = [
+    "Ainulhaqim Iskandar Bin Mohd Isa",
+    "Aisha Bee Binti M.A Sultan",
+    "Alfiahti Binte Hj Na'man",
+    "Amal Nasuha Binte Abu Bakar",
+    "Azlinda Binte Amerudin",
+    "Azrinah Binte Mohamed Zulkiflee",
+    "Bibi Halimah d/o Abdul Kader",
+    "Faridah Bte Abdul Jabar",
+    "Hanifah Jasman",
+    "Hassan Bin Salleh",
+    "Hayati Binte Awang",
+    "Humaira Mohamad Isa",
+    "Huziah Binte Mohd Yusof",
+    "Idalisma Binte Mohamad",
+    "Irman Bin Hassan",
+    "Khairil Asyraf Bin Ali",
+    "Maimunah Binte Mohalas",
+    "Mohammad Firdhaosh Bin Rosli",
+    "Muhamad Isham Bin Ishak",
+    "Muhamad Rahmady Setyanugroho",
+    "Muhammad 'Ammar Bin Norhisham",
+    "Muhammad Ammar Bin Horlis",
+    "Muhammad Firdaus Bin Jusoh",
+    "Muhammad Hanif Bin Abdul Mutalib",
+    "Muhammad Iqbal Bin Mohammad",
+    "Muhammad Khairil Azhar Bin Ridzwan",
+    "Muhammad Nashiir Bin Rahman",
+    "Muhsin Bin Mustafa",
+    "Noor Ellyanie Jalal",
+    "Noormarlina Tasrib",
+    "Nor Wahidah Arba'in",
+    "Noriza Binte Jusary",
+    "Nur Syazana Binti Jumadi",
+    "Nur’Ainniza Binte Abdul Rahman",
+    "Nursyahida Binte Mohamed Zainal",
+    "Nurul Ashiqin Binte Mohamad Yakob",
+    "Nurul Azmah Bte Iqbal",
+    "Rosnah Binte Atan",
+    "Saffuaty Binte Sunardi",
+    "Sakinah Bte Muhamad",
+    "Sayina Pathan",
+    "Shahindah Binte Mohamed Shakirin",
+    "Shahrudin Bin Haron",
+    "Shamsiah Binte Hassan",
+    "Siti Aishah Binte Ali Akbar",
+    "Siti Nadiah Binte Md Husain",
+    "Siti Nurfazirah Binte Hassim",
+    "Siti Rafizah Bte Yusoff",
+    "Sokmawati Bte Sulaiman",
+    "Suriaty Binte Ismail",
+    "Zahari Bin Dollah",
+    "Zainah Binti Abd Manaf",
+    "Zareena Samat",
+    "Zarina Safuan",
+    "Zulfadhli Bin Abu Mansoor"
+  ];
+
+  const evaluators = ["Ustaz Hafiz - Ustaz Romzi", "Ustazah Norwangi - Ustazah Rosnah", "Others"];
+
+  // Each scored item carries the three Jalur bands straight from the
+  // official rubric (Rubrik Pemarkahan – Penilaian Akhir PICGAS), so the
+  // evaluator picks a description instead of guessing a raw number.
+  const rubric = [
+    {
+      part: "A. Komponen Bacaan",
+      groups: [
+        {
+          title: "Tadwir",
+          extraField: { id:"tadwirSurahAyat", label:"Surah dan Ayat" },
+          items: [
+            { id:"tadwirKelancaran", label:"Kelancaran", maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Bacaan yang lancar, tanpa perlu pengulangan. Atau bacaan yang diulang 1 kali (atas kesilapan yang disedari sendiri atau tersasul dsb.)" },
+                { tier:2, high:7, low:5, desc:"Bacaan yang ada kalanya tersekat atau diulang kerana kesilapan yang disedari sendiri. (2 atau 3 kali)" },
+                { tier:3, high:4, low:1, desc:"Bacaan yang banyak tersekat atau diulang kerana kesilapan yang disedari sendiri (lebih dari 3 kali)." }
+              ] },
+            { id:"tadwirKetepatan", label:"Ketepatan", maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Bacaan yang tepat. Atau terdapat tak lebih dari 1 kesilapan yang ditegur dan mampu memperbetulkan bacaan dengan 1 kali ulangan." },
+                { tier:2, high:7, low:5, desc:"Terdapat kesilapan dalam bacaan (yang tak disedari sendiri), namun dapat memperbetulkan setelah ditegur. Atau 2 atau 3 kesilapan." },
+                { tier:3, high:4, low:1, desc:"Terdapat kesilapan dalam bacaan (yang tak disedari sendiri), dan tidak mampu memperbetulkan walaupun setelah ditegur buat kali ketiga. Atau lebih dari 3 kesilapan." }
+              ] }
+          ]
+        },
+        {
+          title: "Hadar",
+          extraField: { id:"hadarSurahAyat", label:"Surah dan Ayat" },
+          items: [
+            { id:"hadarKelancaran", label:"Kelancaran", maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Bacaan yang lancar, tanpa perlu pengulangan. Atau bacaan yang diulang 1 kali (atas kesilapan yang disedari sendiri atau tersasul dsb.)" },
+                { tier:2, high:7, low:5, desc:"Bacaan yang ada kalanya tersekat atau diulang kerana kesilapan yang disedari sendiri. (2 atau 3 kali)" },
+                { tier:3, high:4, low:1, desc:"Bacaan yang banyak tersekat atau diulang kerana kesilapan yang disedari sendiri (lebih dari 3 kali)." }
+              ] },
+            { id:"hadarKetepatan", label:"Ketepatan", maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Bacaan yang tepat. Atau terdapat tak lebih dari 1 kesilapan yang ditegur dan mampu memperbetulkan bacaan dengan 1 kali ulangan." },
+                { tier:2, high:7, low:5, desc:"Terdapat kesilapan dalam bacaan (yang tak disedari sendiri), namun dapat memperbetulkan setelah ditegur. Atau 2 atau 3 kesilapan." },
+                { tier:3, high:4, low:1, desc:"Terdapat kesilapan dalam bacaan (yang tak disedari sendiri), dan tidak mampu memperbetulkan walaupun setelah ditegur buat kali ketiga. Atau lebih dari 3 kesilapan." }
+              ] }
+          ]
+        },
+        {
+          title: "Sebutan Huruf",
+          items: [
+            { id:"makhrajHuruf", label:"Makhraj Huruf", maxMark:5,
+              bands:[
+                { tier:1, high:5, low:4, desc:"Tiada masalah pada makhraj yang dapat dikesan. Atau satu masalah makhraj dikesan." },
+                { tier:2, high:3, low:2, desc:"2 atau 3 masalah pada makhraj dikesan." },
+                { tier:3, high:1, low:0, desc:"Lebih dari 3 masalah pada makhraj dikesan." }
+              ] },
+            { id:"sifatHuruf", label:"Sifat Huruf", maxMark:5,
+              bands:[
+                { tier:1, high:5, low:4, desc:"Tiada masalah pada sifat yang dapat dikesan. Atau satu masalah sifat dikesan." },
+                { tier:2, high:3, low:2, desc:"2 atau 3 masalah pada sifat dikesan." },
+                { tier:3, high:1, low:0, desc:"Lebih dari 3 masalah pada sifat dikesan." }
+              ] }
+          ]
+        },
+        {
+          title: null,
+          extraField: { id:"kertasUjian", label:"Kertas Ujian", type:"select", options:["1","2","3"], placeholder:"Pilih kertas ujian", required:true },
+          items: []
+        },
+        {
+          title: "Huruf Muqota'ah",
+          items: [
+            { id:"hurufMuqotaah", label:null, maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Perlaksanaan yang tepat." },
+                { tier:2, high:7, low:5, desc:"Perlaksanaan yang tepat pada percubaan ke-2 atau ke-3." },
+                { tier:3, high:4, low:1, desc:"Tak dapat baca dengan tepat." }
+              ] }
+          ]
+        },
+        {
+          title: "Gharib 1",
+          items: [
+            { id:"gharib1", label:"Nun Iwadh", maxMark:5,
+              bands:[
+                { tier:1, high:5, low:4, desc:"Perlaksanaan yang tepat." },
+                { tier:2, high:3, low:2, desc:"Perlaksanaan yang tepat pada percubaan ke-2 atau ke-3." },
+                { tier:3, high:1, low:0, desc:"Tak dapat baca dengan tepat." }
+              ] }
+          ]
+        },
+        {
+          title: "Gharib 2",
+          items: [
+            { id:"gharib2", label:"Imalah/Tashil/Isymam/Raum/Naql, etc.", maxMark:5,
+              bands:[
+                { tier:1, high:5, low:4, desc:"Perlaksanaan yang tepat." },
+                { tier:2, high:3, low:2, desc:"Perlaksanaan yang tepat pada percubaan ke-2 atau ke-3." },
+                { tier:3, high:1, low:0, desc:"Tak dapat baca dengan tepat." }
+              ] }
+          ]
+        }
+      ]
+    },
+    {
+      part: "B. Komponen Teori Tajwid",
+      groups: [
+        {
+          title: null,
+          items: [
+            { id:"teoriHukum", label:"Mengeluarkan hukum-hukum tajwid dari ayat pilihan", maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Lancar dan tepat." },
+                { tier:2, high:7, low:5, desc:"Kurang lancar dan/atau kurang tepat (2 atau 3 silap)." },
+                { tier:3, high:4, low:1, desc:"Tak lancar dan/atau tak tepat (lebih dari 3 silap)." }
+              ] },
+            { id:"teoriPembentangan", label:"Pembentangan ringkas bagi hukum tajwid pilihan:",
+              note:["Makna nama hukum tersebut", "Bagaimana hukum tersebut terjadi", "Cara perlaksanaan hukum tersebut"],
+              maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Lancar dan tepat, cukup 3 bahagian." },
+                { tier:2, high:7, low:5, desc:"Kurang lancar dan/atau kurang tepat, atau hanya 2 bahagian." },
+                { tier:3, high:4, low:1, desc:"Tak lancar dan/atau tak tepat, atau hanya 1 bahagian." }
+              ] }
+          ]
+        }
+      ]
+    },
+    {
+      part: "C. Komponen Ulum Al-Quran",
+      groups: [
+        {
+          title: null,
+          items: [
+            { id:"ulumQuran", label:null, maxMark:10,
+              bands:[
+                { tier:1, high:10, low:8, desc:"Jawapan yang tepat, lancar dan meyakinkan." },
+                { tier:2, high:7, low:1, desc:"Jawapan kurang tepat, atau kurang pasti/yakin." },
+                { tier:3, high:0, low:0, desc:"Tak dapat menjawab." }
+              ] }
+          ]
+        }
+      ]
+    }
+  ];
+
+  // Component (Part A/B/C) subtotal metadata, derived once from the rubric above.
+  const partsMeta = rubric.map(part=>{
+    const itemIds = [];
+    let max = 0;
+    part.groups.forEach(group=> group.items.forEach(item=>{
+      itemIds.push(item.id);
+      max += item.maxMark;
+    }));
+    return { name: part.part, itemIds: itemIds, max: max };
+  });
+
+  const itemsById = {};
+
+  function el(tag, props, ...children){
+    const e = document.createElement(tag);
+    props = props || {};
+    Object.entries(props).forEach(([k,v])=>{
+      if(k === "class") e.className = v;
+      else if(v !== undefined) e.setAttribute(k, v);
+    });
+    children.forEach(c=>{
+      if(c === null || c === undefined) return;
+      e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return e;
+  }
+
+  function populateSelect(select, options, placeholder){
+    const ph = document.createElement("option");
+    ph.value = "";
+    ph.textContent = placeholder;
+    ph.disabled = true;
+    ph.selected = true;
+    ph.defaultSelected = true;
+    select.appendChild(ph);
+    options.forEach(opt=>{
+      const o = document.createElement("option");
+      o.value = opt;
+      o.textContent = opt;
+      select.appendChild(o);
+    });
+  }
+
+  function rangeLabel(band){
+    return band.high === band.low ? String(band.high) : (band.high + "–" + band.low);
+  }
+
+  function renderScorePicker(itemId){
+    const item = itemsById[itemId];
+    const container = document.getElementById(itemId + "_scoreWrap");
+    const bandForm = document.querySelector('input[name="' + itemId + '_band"]:checked');
+    container.innerHTML = "";
+    if(!bandForm){ updateSummary(itemId); return; }
+
+    const tier = Number(bandForm.value);
+    const band = item.bands.find(b=>b.tier === tier);
+
+    if(band.high !== band.low){
+      container.appendChild(el("div", { class:"score-picker-label" }, "Markah tepat dalam julat " + rangeLabel(band) + ":"));
+      const row = el("div", { class:"scale-row" });
+      for(let v = band.low; v <= band.high; v++){
+        const id = itemId + "_" + v;
+        const input = el("input", { type:"radio", name:itemId, id:id, value:v });
+        const label = el("label", { for:id, class:"pill" }, String(v));
+        row.appendChild(input);
+        row.appendChild(label);
+      }
+      container.appendChild(row);
+      const best = container.querySelector('input[value="' + band.high + '"]');
+      if(best) best.checked = true;
+    } else {
+      const input = el("input", { type:"radio", name:itemId, id:itemId + "_" + band.high, value:band.high, checked:"checked" });
+      input.style.display = "none";
+      container.appendChild(input);
+    }
+    updateSummary(itemId);
+  }
+
+  function getVal(form, name){
+    const checked = form.querySelector('input[name="' + name + '"]:checked');
+    return checked ? checked.value : "";
+  }
+
+  function updateSummary(itemId){
+    const form = document.getElementById("evalForm");
+    const item = itemsById[itemId];
+    const val = getVal(form, itemId);
+    const summaryEl = document.getElementById(itemId + "_summary");
+    if(val === ""){
+      summaryEl.textContent = "Markah belum dipilih";
+      summaryEl.classList.remove("chosen");
+    } else {
+      summaryEl.textContent = "Markah dipilih: " + val + " / " + item.maxMark;
+      summaryEl.classList.add("chosen");
+    }
+    updateTotal();
+  }
+
+  function computeScoreSummary(){
+    const form = document.getElementById("evalForm");
+    let total = 0;
+    let max = 0;
+    Object.keys(itemsById).forEach(id=>{
+      max += itemsById[id].maxMark;
+      const val = getVal(form, id);
+      if(val !== "") total += Number(val);
+    });
+
+    const parts = partsMeta.map(pm=>{
+      let partTotal = 0;
+      pm.itemIds.forEach(id=>{
+        const val = getVal(form, id);
+        if(val !== "") partTotal += Number(val);
+      });
+      return { name: pm.name, total: partTotal, max: pm.max };
+    });
+
+    const allAnswered = Object.keys(itemsById).every(id=> getVal(form, id) !== "");
+    const partA = parts[0];
+    const passA = partA.max ? (partA.total >= partA.max * 0.4) : false;
+    const passOverall = max ? (total >= max * 0.6) : false;
+    const verdict = allAnswered ? (passA && passOverall ? "Lulus" : "Gagal") : "";
+
+    return { total, max, parts, allAnswered, verdict };
+  }
+
+  function updateTotal(){
+    const summary = computeScoreSummary();
+    document.getElementById("totalScore").textContent = summary.total;
+    document.getElementById("totalMax").textContent = summary.max;
+
+    const breakdownEl = document.getElementById("totalBreakdown");
+    breakdownEl.innerHTML = "";
+    summary.parts.forEach(p=>{
+      breakdownEl.appendChild(el("div", { class:"breakdown-item" },
+        el("strong", {}, p.total + " / " + p.max), " " + p.name
+      ));
+    });
+
+    updateResultPanel(summary);
+  }
+
+  function updateResultPanel(summary){
+    const partA = summary.parts[0];
+    const pctA = partA.max ? (partA.total / partA.max * 100) : 0;
+    const pctTotal = summary.max ? (summary.total / summary.max * 100) : 0;
+
+    document.getElementById("resultA").textContent = partA.total + " / " + partA.max + " (" + Math.round(pctA) + "%)";
+    document.getElementById("resultTotal").textContent = summary.total + " / " + summary.max + " (" + Math.round(pctTotal) + "%)";
+
+    const verdictEl = document.getElementById("resultVerdict");
+    verdictEl.classList.remove("pending", "pass", "fail");
+
+    if(!summary.allAnswered){
+      verdictEl.textContent = "Keputusan belum lengkap";
+      verdictEl.classList.add("pending");
+      return;
+    }
+
+    if(summary.verdict === "Lulus"){
+      verdictEl.textContent = "LULUS";
+      verdictEl.classList.add("pass");
+    } else {
+      verdictEl.textContent = "GAGAL";
+      verdictEl.classList.add("fail");
+    }
+  }
+
+  function buildItem(item, displayName){
+    itemsById[item.id] = Object.assign({}, item, { displayName: displayName });
+
+    const wrap = el("div", { class:"item" });
+    wrap.appendChild(el("div", { class:"item-head" },
+      el("div", { class:"item-label" }, item.label || "", el("span", { class:"req" }, "*")),
+      el("div", { class:"max-badge" }, "Markah penuh: " + item.maxMark)
+    ));
+    if(item.note){
+      const ul = el("ul", { class:"item-note" });
+      item.note.forEach(n=> ul.appendChild(el("li", {}, n)));
+      wrap.appendChild(ul);
+    }
+
+    const bandList = el("div", { class:"band-list" });
+    item.bands.forEach(band=>{
+      const bandId = item.id + "_band" + band.tier;
+      const input = el("input", { type:"radio", name:item.id + "_band", id:bandId, value:band.tier });
+      const card = el("label", { for:bandId, class:"band-card" },
+        el("div", { class:"band-card-top" },
+          el("span", { class:"band-tier" }, "Jalur " + band.tier),
+          el("span", { class:"band-range" }, "Markah " + rangeLabel(band))
+        ),
+        el("div", { class:"band-desc" }, band.desc)
+      );
+      bandList.appendChild(input);
+      bandList.appendChild(card);
+    });
+    wrap.appendChild(bandList);
+
+    wrap.appendChild(el("div", { class:"score-picker", id:item.id + "_scoreWrap" }));
+    wrap.appendChild(el("div", { class:"score-summary", id:item.id + "_summary" }, "Markah belum dipilih"));
+
+    return wrap;
+  }
+
+  function renderRubric(){
+    const root = document.getElementById("rubricRoot");
+    rubric.forEach(part=>{
+      const section = el("section", { class:"part" });
+      section.appendChild(el("div", { class:"part-header" }, el("h2", {}, part.part)));
+      part.groups.forEach(group=>{
+        const g = el("div", { class:"group" });
+        if(group.title) g.appendChild(el("h3", { class:"group-title" }, group.title));
+        if(group.extraField){
+          const f = group.extraField;
+          const label = el("label", { class:"field-label", for:f.id }, f.label);
+          if(f.required) label.appendChild(el("span", { class:"req" }, "*"));
+          let control;
+          if(f.type === "select"){
+            control = el("select", { id:f.id, name:f.id });
+            if(f.required) control.setAttribute("required", "required");
+            populateSelect(control, f.options, f.placeholder);
+          } else {
+            control = el("input", { type:"text", id:f.id, name:f.id });
+            if(f.required) control.setAttribute("required", "required");
+          }
+          g.appendChild(el("div", { class:"group-extra-field" }, label, control));
+        }
+        group.items.forEach(item=>{
+          const displayName = item.label || group.title || part.part;
+          g.appendChild(buildItem(item, displayName));
+        });
+        section.appendChild(g);
+      });
+      root.appendChild(section);
+    });
+
+    root.addEventListener("change", (e)=>{
+      const t = e.target;
+      if(t.type !== "radio") return;
+      if(t.name.endsWith("_band")){
+        const itemId = t.name.slice(0, -"_band".length);
+        renderScorePicker(itemId);
+      } else if(itemsById[t.name]){
+        updateSummary(t.name);
+      }
+    });
+
+    updateTotal();
+  }
+
+  function scrollToSuccess(){
+    // Deferred to the next frame so it runs after the form has actually
+    // collapsed (display:none) and the page has reflowed — doing it in the
+    // same tick as the DOM change can get fought by the browser's scroll
+    // anchoring, which tries to preserve the old scroll position.
+    requestAnimationFrame(()=>{
+      try {
+        // If this page is embedded in an iframe on the same origin as its
+        // parent (e.g. some site builders), also scroll the outer page.
+        // Cross-origin embeds (most iframe embeds, including a typical
+        // Google Sites "Embed code" block) will throw here and this is
+        // silently skipped — a page inside a cross-origin iframe is not
+        // allowed to scroll the page around it, by browser design.
+        if(window.top && window.top !== window){
+          window.top.scrollTo({ top:0, behavior:"smooth" });
+        }
+      } catch(err) { /* cross-origin parent — can't reach it, that's fine */ }
+
+      window.scrollTo({ top:0, behavior:"smooth" });
+
+      const panel = document.getElementById("successPanel");
+      if(panel && panel.classList.contains("show") && panel.scrollIntoView){
+        panel.scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+    });
+  }
+
+  function handleSubmit(e){
+    e.preventDefault();
+    const form = e.target;
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+
+    const errorBanner = document.getElementById("errorBanner");
+    errorBanner.classList.remove("show");
+
+    const missing = Object.keys(itemsById).filter(id=> getVal(form, id) === "");
+    if(missing.length){
+      const names = missing.map(id=> itemsById[id].displayName);
+      errorBanner.textContent = "Sila pilih Jalur bagi komponen berikut sebelum menghantar: " + names.join(", ") + ".";
+      errorBanner.classList.add("show");
+      errorBanner.scrollIntoView({ behavior:"smooth", block:"center" });
+      return;
+    }
+
+    const summary = computeScoreSummary();
+
+    const payload = {
+      tarikhPenilaian: form.tarikhPenilaian.value,
+      namaPeserta: form.namaPeserta.value,
+      tadwirSurahAyat: form.tadwirSurahAyat.value.trim(),
+      tadwirKelancaran: getVal(form, "tadwirKelancaran"),
+      tadwirKetepatan: getVal(form, "tadwirKetepatan"),
+      hadarSurahAyat: form.hadarSurahAyat.value.trim(),
+      hadarKelancaran: getVal(form, "hadarKelancaran"),
+      hadarKetepatan: getVal(form, "hadarKetepatan"),
+      makhrajHuruf: getVal(form, "makhrajHuruf"),
+      sifatHuruf: getVal(form, "sifatHuruf"),
+      kertasUjian: form.kertasUjian.value,
+      hurufMuqotaah: getVal(form, "hurufMuqotaah"),
+      gharib1: getVal(form, "gharib1"),
+      gharib2: getVal(form, "gharib2"),
+      teoriHukum: getVal(form, "teoriHukum"),
+      teoriPembentangan: getVal(form, "teoriPembentangan"),
+      ulumQuran: getVal(form, "ulumQuran"),
+      kesediaanArb: getVal(form, "kesediaanArb"),
+      ulasanPenilai: form.ulasanPenilai.value.trim(),
+      namaPenilai: form.namaPenilai.value === "Others" ? form.namaPenilaiOther.value.trim() : form.namaPenilai.value,
+      markahKomponenA: summary.parts[0].total,
+      markahKomponenB: summary.parts[1].total,
+      markahKomponenC: summary.parts[2].total,
+      jumlahKeseluruhan: summary.total,
+      keputusan: summary.verdict
+    };
+
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Menghantar...";
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    })
+    .then(res=>{
+      if(!res.ok) throw new Error("Ralat pelayan (" + res.status + ")");
+      return res.text();
+    })
+    .then(text=>{
+      let parsed = null;
+      try { parsed = JSON.parse(text); } catch(err) { /* non-JSON response, assume the write succeeded */ }
+      if(parsed && parsed.result === "error"){
+        throw new Error(parsed.message || "Ralat tidak diketahui");
+      }
+      document.getElementById("evalForm").style.display = "none";
+      document.getElementById("successPanel").classList.add("show");
+      scrollToSuccess();
+    })
+    .catch(err=>{
+      errorBanner.textContent = "Penghantaran gagal: " + err.message + ". Sila semak sambungan internet atau pautan Apps Script, kemudian cuba lagi.";
+      errorBanner.classList.add("show");
+    })
+    .finally(()=>{
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Hantar Penilaian";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", ()=>{
+    if(SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
+      document.getElementById("configWarning").style.display = "block";
+    }
+
+    populateSelect(document.getElementById("tarikhPenilaian"), dates, "Pilih tarikh");
+    populateSelect(document.getElementById("namaPeserta"), participants, "Pilih nama peserta");
+    populateSelect(document.getElementById("namaPenilai"), evaluators, "Pilih nama penilai");
+
+    document.getElementById("namaPenilai").addEventListener("change", (e)=>{
+      const otherField = document.getElementById("namaPenilaiOtherField");
+      const otherInput = document.getElementById("namaPenilaiOther");
+      if(e.target.value === "Others"){
+        otherField.style.display = "";
+        otherInput.setAttribute("required", "required");
+      } else {
+        otherField.style.display = "none";
+        otherInput.removeAttribute("required");
+        otherInput.value = "";
+      }
+    });
+    renderRubric();
+
+    document.getElementById("evalForm").addEventListener("submit", handleSubmit);
+
+    function resetFormState(){
+      document.getElementById("evalForm").reset();
+      // form.reset() falls back to the first *enabled* option when no option
+      // carries the HTML "selected" attribute (our placeholders are disabled,
+      // so the browser skips them and lands on the first real choice instead).
+      // Force the selects back to their empty placeholder value explicitly.
+      ["tarikhPenilaian", "namaPeserta", "kertasUjian", "namaPenilai"].forEach(id=>{
+        document.getElementById(id).value = "";
+      });
+      Object.keys(itemsById).forEach(id=>{
+        document.getElementById(id + "_scoreWrap").innerHTML = "";
+        updateSummary(id);
+      });
+      document.getElementById("namaPenilaiOtherField").style.display = "none";
+      document.getElementById("namaPenilaiOther").removeAttribute("required");
+    }
+
+    document.getElementById("clearBtn").addEventListener("click", resetFormState);
+    document.getElementById("submitAnother").addEventListener("click", ()=>{
+      resetFormState();
+      document.getElementById("successPanel").classList.remove("show");
+      document.getElementById("evalForm").style.display = "";
+      scrollToSuccess();
+    });
+  });
+</script>
+</body>
+</html>
