@@ -532,8 +532,8 @@
     <div class="result-section">
       <h3 class="result-heading">Syarat Kelulusan</h3>
       <ul class="pass-criteria">
-        <li>40% ke atas bagi Komponen A (Bacaan)</li>
-        <li>60% Jumlah Keseluruhan (Komponen A+B+C)</li>
+        <li>Sekurang-kurangnya 40 markah bagi Komponen A (Bacaan)</li>
+        <li>60% ke atas bagi Jumlah Keseluruhan (Komponen A+B+C)</li>
       </ul>
       <div class="result-box" id="resultBox">
         <div class="result-row">
@@ -568,6 +568,10 @@
   // 1. Paste your Google Apps Script Web App URL below (ends in /exec)
   // ---------------------------------------------------------------
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz15gLVkrqFQtWQLdL5BnCS9H5dihVJwGAlX1uyAICDm4nD1CtrkUOUk5CGcd4EfTzH/exec";
+
+  // Syarat Kelulusan: Komponen A needs a flat 40 marks (out of 70) — not a
+  // percentage — plus the overall total needs 60% or more (see below).
+  const PASS_MARK_A = 40;
 
   const dates = ["3 Oct", "10 Oct", "17 Oct", "24 Oct"];
 
@@ -892,7 +896,10 @@
 
     const allAnswered = Object.keys(itemsById).every(id=> getVal(form, id) !== "");
     const partA = parts[0];
-    const passA = partA.max ? (partA.total >= partA.max * 0.4) : false;
+    // Komponen A pass mark is a flat 40 marks (out of 70), not 40% — these
+    // happen to differ (40% of 70 would be 28), so this is an absolute
+    // threshold, independent of partA.max.
+    const passA = partA.total >= PASS_MARK_A;
     const passOverall = max ? (total >= max * 0.6) : false;
     const verdict = allAnswered ? (passA && passOverall ? "Lulus" : "Gagal") : "";
 
